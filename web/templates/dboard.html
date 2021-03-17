@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+  <form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.freqValue.label }} <br>
+      {{ form.freqValue(size=4) }}
+      {% for error in form.freqValue.errors %}
+      <span style="color: red;">[{{error}}]</span>
+      {% endfor %}
+      {{ form.freqUnit() }}{{ form.freqUnit.label }}
+      {{ form.freqSubmit() }}
+    </p>
+  </form>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4"">
+      <canvas id="tChart" width="450px" height="400px"></canvas>
+      <table id="tTable">
+       <tr><td>Min</td><td>Max</td><td>Avg</td></tr>
+       <tr><td>0</td><td>0</td><td>0</td></tr>
+      </table>
+      <button id="tbutton" align="center" >Refresh</button>
+    </div>
+    <div class="col-md-4"">
+      <canvas id="hChart" width="450px" height="400px"></canvas>
+      <table id="hTable">
+       <tr><td>Min</td><td>Max</td><td>Avg</td></tr>
+       <tr><td>0</td><td>0</td><td>0</td></tr>
+      </table>
+      <button id="hbutton" align="center" >Refresh</button>
+    </div>
+    <div class="col-md-4"">
+      <canvas id="pChart" width="450px" height="400px"></canvas>
+      <table id="pTable">
+       <tr><td>Min</td><td>Max</td><td>Avg</td></tr>
+       <tr><td>0</td><td>0</td><td>0</td></tr>
+      </table>
+      <button id="pbutton" align="center" >Refresh</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
