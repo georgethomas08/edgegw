@@ -73,7 +73,7 @@ def login():
             flash('Login has Failed!!!')
             return render_template('login.html', title='Sign In', form=form)
         #flash('Login is Successful!!!')
-        return render_template('dboard.html', title='Main Application')
+        return redirect(url_for('dboard'))
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -112,14 +112,10 @@ def manage():
 def dboard():
         form = DataFreqForm()
         if form.validate_on_submit():
-                ts = datetime.datetime.now()
-                dataF = DataFrequency(dataFq=form.freqValue.data, dataUt=str(form.freqUnit.data), dataTs = ts)
+                dataF = DataFrequency(dataFq=form.freqValue.data, dataUt=str(form.freqUnit.data))
                 dataF.save()
                 print("Data Frequency: " + str(form.freqValue.data))
                 print("Data Unit: " + str(form.freqUnit.data))
-                print("Data Time: " + str(ts))
-                testDoc= DataFrequency.objects(dataUt = 'True').to_json()
-                print(testDoc)
                 if(form.freqUnit.data):
                     flash('Current Data Frequency:' + str(form.freqValue.data) + 'minutes')
                 else:
@@ -185,11 +181,17 @@ def tsdataput():
         tsdata = Tsdata(temp=temp,humidity=humidity,pressure=pressure,ts=ts,deviceId=deviceId)
         tsdata.save()
         print(f'Data received is Temp:{temp} Humidity:{humidity} pressure:{pressure} ts:{ts}')
-        testDoc= DataFrequency.objects().to_json()
-        #print(testDoc)
-        #get_most_recent(testDoc)
-        return '''Temp:{} Humidity:{} Pressure:{} ts:{}'''.format(temp,humidity,pressure,ts)
-        #return (FreqValUnit)
+        for dataFreq in DataFrequency.objects:
+            print(dataFreq.dataFq)
+
+        resp = {
+        "DataFreq":dataFreq.dataFq,
+        "Unit":dataFreq.dataUt
+        }
+
+        resp = json.dumps(resp)
+        #return '''Temp:{} Humidity:{} Pressure:{} ts:{}'''.format(temp,humidity,pressure,ts)
+        return (resp)
 
 def add_user_db():
     print("In add_user_db()")
@@ -215,25 +217,6 @@ def validate_user():
         return Response("Authentication failed!", 401)
     print ('Authentication Success!')
     return Response("Authentication Success!!!", 200)
-
-def get_most_recent(data):
-    lst = data
-    newlst = sorted(lst,key=lambda x:datetime.datetime.strptime(x['dataTs'],'%a %d %b %Y %H:%M:%S %Z'),reverse=True)
-    recentdate = None
-    nowd = datetime.datetime.now()
-    retlist = []
-    for i in newlst:
-        d = datetime.datetime.strptime(i['dataTs'],'%a %d %b %Y %H:%M:%S %Z')
-        if recentdate is not None:
-             if d == recentdate:
-                 retlist.append(i)
-             else:
-                 break;
-        elif d < nowd:
-            recentdate = d
-            retlist.append(i)
-    print(retlist)
-    return retlist
 
 if __name__ == '__main__':
     app.run(debug=True)

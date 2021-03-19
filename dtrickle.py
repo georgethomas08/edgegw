@@ -13,14 +13,16 @@ def myconverter(o):
     if isinstance(o, datetime):
         return o.__str__()
 
-def main(argv):
+#def main(argv):
+def main():
     # Arguments passed
-    print("\nName of Python script:", sys.argv[0])
-    print("\nValue for iteration  :", sys.argv[1])
-    print("\nTime Interval        :", sys.argv[2])
+    #print("\nName of Python script:", sys.argv[0])
+    #print("\nValue for iteration  :", sys.argv[1])
+    #print("\nTime Interval        :", sys.argv[2])
 
-    for i in range(int(sys.argv[1])):
-        for j in range(1,6):
+    while(1):
+    #for i in range(int(sys.argv[1])):
+        #for j in range(1,6):
             tstamp = datetime.now()
             randTemp = randint(1,20)
             temp = randint(5+randTemp, 50+randTemp)
@@ -34,18 +36,27 @@ def main(argv):
 	        "humidity":humidity,
 	        "temp":temp,
 	        "ts": tstamp,
-	        "deviceId": j
+	        "deviceId": 1
             }
             #print(rec)
             jtsdata = json.dumps(rec, default = myconverter)
-            #print(jtsdata)
+            print(jtsdata)
             #url='http://ec2-34-221-110-17.us-west-2.compute.amazonaws.com:30971/tsdataput'
             #url='http://192.168.49.2:30971/tsdataput'
             url='http://localhost/tsdataput'
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=jtsdata, headers=headers)
-            print(r.text)
-        time.sleep(int(sys.argv[2]))
+            resp = requests.post(url, data=jtsdata, headers=headers)
+            resp = json.loads(str(resp.text))
+            print(resp)
+            unit = str(resp['Unit'])
+            if(unit == "False"):
+                time.sleep(int(resp['DataFreq']))
+            else:
+                time.sleep(int(resp['DataFreq'])*60)
+
+
+        #time.sleep(int(sys.argv[2]))
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+   #main(sys.argv[1:])
+   main()

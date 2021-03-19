@@ -47,8 +47,6 @@ class Devinfo(mdb.Document):
 class DataFrequency(mdb.Document):
     dataFq = mdb.IntField()
     dataUt = mdb.StringField()
-    dataTs = mdb.DateTimeField()
     def to_json(self):
       return {"dataFq": self.dataFreq,
-              "dataUt": self.dataUnit,
-              "dataTs": self.dataTs}
+              "dataUt": self.dataUnit}
