@@ -5,6 +5,11 @@
   <form action="" method="POST" novalidate>
     {{ form.hidden_tag() }}
     <p>
+      {{ form.tEnable() }}{{ form.tEnable.label }}
+      {{ form.hEnable() }}{{ form.hEnable.label }}
+      {{ form.pEnable() }}{{ form.pEnable.label }}
+    </p>
+    <p>
       {{ form.freqValue.label }} <br>
       {{ form.freqValue(size=4) }}
       {% for error in form.freqValue.errors %}
@@ -18,7 +23,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-4"">
+    <div id="tBlock" class="col-md-4"">
       <canvas id="tChart" width="450px" height="400px"></canvas>
       <table id="tTable">
        <tr><td>Min</td><td>Max</td><td>Avg</td></tr>
@@ -26,7 +31,7 @@
       </table>
       <button id="tbutton" align="center" >Refresh</button>
     </div>
-    <div class="col-md-4"">
+    <div id="hBlock" class="col-md-4"">
       <canvas id="hChart" width="450px" height="400px"></canvas>
       <table id="hTable">
        <tr><td>Min</td><td>Max</td><td>Avg</td></tr>
@@ -34,7 +39,7 @@
       </table>
       <button id="hbutton" align="center" >Refresh</button>
     </div>
-    <div class="col-md-4"">
+    <div id="pBlock" class="col-md-4"">
       <canvas id="pChart" width="450px" height="400px"></canvas>
       <table id="pTable">
        <tr><td>Min</td><td>Max</td><td>Avg</td></tr>

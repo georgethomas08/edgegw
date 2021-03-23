@@ -112,7 +112,7 @@ def manage():
 def dboard():
         form = DataFreqForm()
         if form.validate_on_submit():
-                dataF = DataFrequency(dataFq=form.freqValue.data, dataUt=str(form.freqUnit.data))
+                dataF = DataFrequency(dataFq=form.freqValue.data, dataUt=str(form.freqUnit.data), eTemp=str(form.tEnable.data), eHumi=str(form.hEnable.data), ePres=str(form.pEnable.data))
                 dataF.save()
                 print("Data Frequency: " + str(form.freqValue.data))
                 print("Data Unit: " + str(form.freqUnit.data))
@@ -120,7 +120,7 @@ def dboard():
                     flash('Current Data Frequency:' + str(form.freqValue.data) + 'minutes')
                 else:
                     flash('Current Data Frequency:' + str(form.freqValue.data) + 'seconds')
-                return redirect(url_for('dboard'))
+                #return redirect(url_for('dboard'))
         return render_template('dboard.html', title='Dashboard', form=form)
 
 @app.route('/config', methods=['GET', 'POST'])
@@ -149,9 +149,9 @@ def modbusupload():
 def tdata():
         #for temprec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{temprec.deviceId} Temperature:{temprec.temp} Timestamp:{temprec.ts}')
-        #tslowlimit = datetime.datetime.now()-timedelta(minutes=1)
-        #temprecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('temp','ts')
-        temprecs = Tsdata.objects(deviceId=1).only('temp','ts')
+        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
+        temprecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('temp','ts')
+        #temprecs = Tsdata.objects(deviceId=1).only('temp','ts')
         return jsonify({'temprecs':temprecs})
         #return jsonify({'results': sample(range(1,10),5)})
 
@@ -159,26 +159,38 @@ def tdata():
 def hdata():
         #for humrec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{humrec.deviceId} Humidity:{humrec.humidity} Timestamp:{humrec.ts}')
-        humrecs = Tsdata.objects(deviceId=1).only('humidity','ts')
+        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
+        humrecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('humidity','ts')
+        #humrecs = Tsdata.objects(deviceId=1).only('humidity','ts')
         return jsonify({'humrecs':humrecs})
 
 @app.route('/pdata', methods=['GET', 'POST'])
 def pdata():
         #for presrec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{presrec.deviceId} Humidity:{presrec.pressure} Timestamp:{presrec.ts}')
-        presrecs = Tsdata.objects(deviceId=1).only('pressure','ts')
+        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
+        presrecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('pressure','ts')
+        #presrecs = Tsdata.objects(deviceId=1).only('pressure','ts')
         return jsonify({'presrecs':presrecs})
 
 @app.route('/tsdataput', methods=['GET', 'POST'])
 def tsdataput():
+        temp = 0
+        humidity = 0
+        pressure = 0
+
         req_data = request.get_json()
 
-        temp     = int(req_data['temp'])
-        humidity = int(req_data['humidity'])
-        pressure = int(req_data['pressure'])
+        if(req_data.get('temp')):
+            temp = int(req_data['temp'])
+        if(req_data.get('humidity')):
+            humidity = int(req_data['humidity'])
+        if(req_data.get('pressure')):
+            pressure = int(req_data['pressure'])
+
         deviceId = int(req_data['deviceId'])
         ts       = datetime.datetime.strptime(req_data['ts'], '%Y-%m-%d %H:%M:%S.%f')
-        tsdata = Tsdata(temp=temp,humidity=humidity,pressure=pressure,ts=ts,deviceId=deviceId)
+        tsdata   = Tsdata(temp=temp,humidity=humidity,pressure=pressure,ts=ts,deviceId=deviceId)
         tsdata.save()
         print(f'Data received is Temp:{temp} Humidity:{humidity} pressure:{pressure} ts:{ts}')
         for dataFreq in DataFrequency.objects:
@@ -186,7 +198,10 @@ def tsdataput():
 
         resp = {
         "DataFreq":dataFreq.dataFq,
-        "Unit":dataFreq.dataUt
+        "Unit":dataFreq.dataUt,
+        "Temperature":dataFreq.eTemp,
+        "Humidity":dataFreq.eHumi,
+        "Pressure":dataFreq.ePres
         }
 
         resp = json.dumps(resp)

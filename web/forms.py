@@ -37,6 +37,9 @@ class ManageForm(FlaskForm):
     submit    = SubmitField( 'Add Device')
 
 class DataFreqForm(FlaskForm):
+    tEnable = BooleanField('Temperature', default=True)
+    hEnable = BooleanField('Humidity', default=True)
+    pEnable = BooleanField('Pressure', default=True)
     freqValue = IntegerField('Data Frequency:', validators=[DataRequired()])
     freqUnit = BooleanField('Minutes')
-    freqSubmit = SubmitField('Set!!')
+    freqSubmit = SubmitField('Submit')

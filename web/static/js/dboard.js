@@ -3,13 +3,33 @@ document.addEventListener('DOMContentLoaded', function() {
      tChartLoad();
      hChartLoad();
      pChartLoad();
+     enableBlock("tEnable", "tBlock");
+     enableBlock("hEnable", "hBlock");
+     enableBlock("pEnable", "pBlock");
   });
 
  setInterval(tChartLoad(),5000);
 
+
+
     document.getElementById("tbutton").onclick = function() {tChartLoad()};
     document.getElementById("hbutton").onclick = function() {hChartLoad()};
     document.getElementById("pbutton").onclick = function() {pChartLoad()};
+
+    document.getElementById("tEnable").onclick = function() {enableBlock("tEnable", "tBlock")};
+    document.getElementById("hEnable").onclick = function() {enableBlock("hEnable", "hBlock")};
+    document.getElementById("pEnable").onclick = function() {enableBlock("pEnable", "pBlock")};
+
+    function enableBlock(chk, txt) {
+      var checkBox = document.getElementById(chk);
+      var text = document.getElementById(txt);
+      if (checkBox.checked == true){
+        text.style.display = "block";
+      }
+      else {
+        text.style.display = "none";
+      }
+    }
 
     function arrayMin(arr) {
     var len = arr.length, min = Infinity;
