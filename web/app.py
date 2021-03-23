@@ -149,8 +149,9 @@ def modbusupload():
 def tdata():
         #for temprec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{temprec.deviceId} Temperature:{temprec.temp} Timestamp:{temprec.ts}')
-        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
-        temprecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('temp','ts')
+        tslowlimit = datetime.datetime.now()+timedelta(minutes=270)
+        print(tslowlimit)
+        temprecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit, temp__gte = 1).only('temp','ts')
         #temprecs = Tsdata.objects(deviceId=1).only('temp','ts')
         return jsonify({'temprecs':temprecs})
         #return jsonify({'results': sample(range(1,10),5)})
@@ -159,8 +160,8 @@ def tdata():
 def hdata():
         #for humrec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{humrec.deviceId} Humidity:{humrec.humidity} Timestamp:{humrec.ts}')
-        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
-        humrecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('humidity','ts')
+        tslowlimit = datetime.datetime.now()+timedelta(minutes=270)
+        humrecs = Tsdata.objects(deviceId=1,ts__gte = tslowlimit, humidity__gte = 1).only('humidity','ts')
         #humrecs = Tsdata.objects(deviceId=1).only('humidity','ts')
         return jsonify({'humrecs':humrecs})
 
@@ -168,8 +169,8 @@ def hdata():
 def pdata():
         #for presrec in Tsdata.objects(deviceId=1):
             #print(f'DeviceID:{presrec.deviceId} Humidity:{presrec.pressure} Timestamp:{presrec.ts}')
-        tslowlimit = datetime.datetime.now()-timedelta(hours=1)
-        presrecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('pressure','ts')
+        tslowlimit = datetime.datetime.now()+timedelta(minutes=270)
+        presrecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit, pressure__gte = 1).only('pressure','ts')
         #presrecs = Tsdata.objects(deviceId=1).only('pressure','ts')
         return jsonify({'presrecs':presrecs})
 
@@ -194,7 +195,8 @@ def tsdataput():
         tsdata.save()
         print(f'Data received is Temp:{temp} Humidity:{humidity} pressure:{pressure} ts:{ts}')
         for dataFreq in DataFrequency.objects:
-            print(dataFreq.dataFq)
+            pass
+            #print(dataFreq.dataFq)
 
         resp = {
         "DataFreq":dataFreq.dataFq,
